@@ -1,7 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
-  "enabledManagers": ["dockerfile", "github-actions"],
+  "enabledManagers": ["dockerfile", "github-actions", "custom.regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Alpine packages pinned in apk add, looked up for the Alpine release of the BUILD_FROM base image",
+      "managerFilePatterns": ["/(^|/)Dockerfile$/"],
+      "matchStrings": [
+        "ARG BUILD_FROM=\\S+:(?<alpineMajor>\\d+)\\.(?<alpineMinor>\\d+)-[\\s\\S]*",
+        "apk add(?:[^\\n]*\\\\\\n)*[^\\n]*",
+        "\\s\"(?<depName>[a-z0-9][a-z0-9._+-]*)=(?<currentValue>[0-9][^\"\\s]*-r\\d+)\""
+      ],
+      "matchStringsStrategy": "recursive",
+      "datasourceTemplate": "repology",
+      "packageNameTemplate": "alpine_{{alpineMajor}}_{{alpineMinor}}/{{depName}}",
+      "versioningTemplate": "loose"
+    }
+  ],
   "semanticCommits": "disabled",
   "labels": ["dependencies"],
   "packageRules": [

@@ -3,7 +3,9 @@ ARG BUILD_FROM=ghcr.io/home-assistant/base:3.24-2026.11.0@sha256:58422480a299b16
 FROM $BUILD_FROM
 
 # Setup base
-RUN apk add --no-cache "nginx>=1.30.7" openssl
+RUN apk add --no-cache \
+    "nginx=1.30.7-r0" \
+    "openssl=3.5.9-r0"
 
 # Copy data
 COPY rootfs /
