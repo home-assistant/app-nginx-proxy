@@ -137,7 +137,11 @@ http {
             proxy_set_header Connection $connection_upgrade;
             proxy_set_header X-Forwarded-Host $forward_host;
             {{- if not .options.real_ip_from }}
+              {{- if .options.cloudflare }}
+            proxy_set_header X-Forwarded-For $realip_remote_addr;
+              {{- else }}
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              {{- end}}
             {{- else }}
             proxy_set_header X-Real-IP $proxy_protocol_addr;
             proxy_set_header X-Forwarded-For $proxy_protocol_addr;
